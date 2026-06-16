@@ -1,50 +1,47 @@
-import json #Daten in JSON-Datei speichern
-import os #kontrole, ob Datei existiert
+import json  # Daten in JSON-Datei speichern
+import os    # Kontrolle, ob Datei existiert
 
 DATEI_NAME = "aufgaben.json"
 
 
-#------------------ Daten laden und speichern------
+# ------------------ Daten laden und speichern ------------------
 def daten_laden():
-    if os.path.exists(DATEI_NAME): # kotrole, ob Datei existiert
+    if os.path.exists(DATEI_NAME):  # Kontrolle, ob Datei existiert
         try:
-            with open(DATEI_NAME, "r", encoding="utf-8") as datei: #öffnet Datei zum Lesen (r)
-                return json.load(datei)  #lädt die Daten aus der JSON-Datei und gibt sie als Python-Objekt zurück
-        except: #sollte ein Fehler auftreten, wird eine leere Liste zurückgegeben
-            return [] 
+            with open(DATEI_NAME, "r", encoding="utf-8") as datei:  # öffnet Datei zum Lesen
+                return json.load(datei)  # lädt die Daten aus der JSON-Datei
+        except:
+            return []
     return []
 
 
 def daten_speichern(aufgaben):
-    with open(DATEI_NAME, "w", encoding="utf-8") as datei: #schreibt die Daten in die JSON-Datei (w)
-        json.dump(aufgaben, datei, ensure_ascii=False, indent=4) #aufgaben werden in die Datei geschrieben,
-                                                                #ensure_ascii=False sorgt dafür, dass Umlaute korrekt gespeichert werden
-                                                                #indent=4 sorgt für eine lesbare Formatierung
+    with open(DATEI_NAME, "w", encoding="utf-8") as datei:  # schreibt die Daten in die JSON-Datei
+        json.dump(aufgaben, datei, ensure_ascii=False, indent=4)
 
 
-# -----------------------------Aufgaben-Funktionen
-
+# ------------------ Aufgaben-Funktionen ------------------
 def aufgabe_hinzufügen(aufgaben):
-    titel = input("Gib eine Aufgabe ein: ").strip() #strip() entfernt führende und nachgestellte Leerzeichen
+    titel = input("Gib eine Aufgabe ein: ").strip()  # entfernt Leerzeichen vorne und hinten
 
     if titel == "":
         print("Du hast nichts eingegeben.")
         return
 
-    prioritaet = input("Gib die Priorität ein (hoch / mittel / tief): ").strip().lower() #lower() wandelt die Eingabe in Kleinbuchstaben um
+    prioritaet = input("Gib die Priorität ein (hoch / mittel / tief): ").strip().lower()
 
     if prioritaet not in ["hoch", "mittel", "tief"]:
         print("Ungültige Priorität. Es wird 'mittel' gespeichert.")
         prioritaet = "mittel"
 
-    neue_aufgabe =          { #Jede Aufgabe hat einen Titel, eine Priorität und einen Erledigt-Status, Am Anfang wird immer(False) sein
+    neue_aufgabe = {
         "titel": titel,
         "prioritaet": prioritaet,
         "erledigt": False
     }
 
-    aufgaben.append(neue_aufgabe) #append() fügt die neue Aufgabe der Liste hinzu
-    daten_speichern(aufgaben) #Funkton wird aufgerufen
+    aufgaben.append(neue_aufgabe)
+    daten_speichern(aufgaben)
     print("Aufgabe wurde gespeichert.")
 
 
@@ -57,7 +54,7 @@ def aufgaben_anzeigen(aufgaben):
     nummer = 1
     for aufgabe in aufgaben:
         status = "Erledigt" if aufgabe["erledigt"] else "Offen"
-        print(f"{nummer} - {aufgabe['titel']} | Priorität: {aufgabe['prioritaet']} | Status: {status}") #f=Strings ermöglichen das Einfügen von Variablen in Strings
+        print(f"{nummer} - {aufgabe['titel']} | Priorität: {aufgabe['prioritaet']} | Status: {status}")
         nummer += 1
 
 
@@ -72,9 +69,9 @@ def aufgabe_löschen(aufgaben):
     if nummer.isdigit():
         nummer = int(nummer)
 
-        if 1 <= nummer <= len(aufgaben): #<= bedeutet "kleiner oder gleich"
-            gelöschte_aufgabe = aufgaben.pop(nummer - 1) #pop() entfernt die Aufgabe aus der Liste und gibt sie zurück
-            daten_speichern(aufgaben) 
+        if 1 <= nummer <= len(aufgaben):
+            gelöschte_aufgabe = aufgaben.pop(nummer - 1)
+            daten_speichern(aufgaben)
             print(f"Aufgabe '{gelöschte_aufgabe['titel']}' wurde gelöscht.")
         else:
             print("Diese Nummer gibt es nicht.")
@@ -93,8 +90,8 @@ def aufgabe_erledigen(aufgaben):
     if nummer.isdigit():
         nummer = int(nummer)
 
-        if 1 <= nummer <= len(aufgaben): #<= bedeutet "kleiner oder gleich"
-            aufgaben[nummer - 1]["erledigt"] = True 
+        if 1 <= nummer <= len(aufgaben):
+            aufgaben[nummer - 1]["erledigt"] = True
             daten_speichern(aufgaben)
             print("Aufgabe wurde als erledigt markiert.")
         else:
@@ -104,7 +101,7 @@ def aufgabe_erledigen(aufgaben):
 
 
 def aufgaben_suchen(aufgaben):
-    suchbegriff = input("Wonach möchtest du suchen? ").strip().lower() #strip() entfernt führende und nachgestellte Leerzeichen
+    suchbegriff = input("Wonach möchtest du suchen? ").strip().lower()
 
     if suchbegriff == "":
         print("Du hast nichts eingegeben.")
@@ -117,8 +114,7 @@ def aufgaben_suchen(aufgaben):
     for aufgabe in aufgaben:
         if suchbegriff in aufgabe["titel"].lower():
             status = "Erledigt" if aufgabe["erledigt"] else "Offen"
-            print(f"{nummer} - {aufgabe['titel']} | Priorität: {aufgabe['prioritaet']} | Status: {status}") 
-
+            print(f"{nummer} - {aufgabe['titel']} | Priorität: {aufgabe['prioritaet']} | Status: {status}")
             gefunden = True
         nummer += 1
 
@@ -130,7 +126,8 @@ def programm_beenden():
     print("Programm wird beendet.")
 
 
-# ---------- Hauptprogramm
+# ------------------ Hauptprogramm ------------------
+aufgaben = daten_laden()
 
 while True:
     print("")
